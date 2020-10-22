@@ -17,6 +17,8 @@ python3 Blinder.py username.xss.ht SubDomains.txt
 
 - Blinder Contains Basic Response Code Check. Feel Free To Add Any Response Code On StatusCheck Function With The Desription. And I Would Love To Mergo It Here.
 
+- While Running Blinder. You Shouldn't Put Some Arg Before The Otherone. Or Put Args On Wrong Places. Blinder Is Using SYS To Get The Args Accroding To The Index Number. So You Should Use It Like This ```python3 {XSSHunter} {URLs-File} {MODE}``` For Example If You Put The MODE Before The URLs-File You WIll Get An Error Since The Programs Will Got That The MODE Is The File It Should Open.
+
 ### Output 
 ```
 root@MohammedDief:~/Programing/PythonProjects/Blinder$ python3 Blinder.py {username}.xss.ht vimeo.com.robe 
