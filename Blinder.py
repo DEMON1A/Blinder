@@ -67,7 +67,6 @@ def Sender(URL , Redirect , Payload , Hunter):
             print("Request Has Been Sent To: {0}, Status-Code: {1}".format(URL , str(Response.status_code)))
     except Exception as e:
         print("Can't Request This URL: {0}".format(URL))
-        print(str(e))
 
 def CollectOptions():
     Parser = optparse.OptionParser()
