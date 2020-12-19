@@ -1,6 +1,18 @@
 import requests , optparse , concurrent.futures , urllib3
 from os import path
 
+def PayloadsStripper(Payload , Strip):
+    if Strip == None or Strip == '':
+        Strip = ","
+
+    if Strip in Payload:
+        # There's something to split
+        Payloads = Payload.split(Strip)
+    else:
+        Payloads = Payload
+
+    return Payloads
+
 def Validation(Options):
     # Main Config For `Main`
     Config = {
@@ -61,11 +73,11 @@ def Sender(URL , Redirect , Payload , Hunter):
     try:
         if Redirect == "allow":
             Response = requests.get(URL , verify=False , timeout=5 , headers={"User-Agent":Payload} , allow_redirects=True)
-            print("\rRequest Has Been Sent To: {0}, Status-Code: {1}".format(URL , str(Response.status_code)))
+            print("\rRequest Has Been Sent To: {0}, Status-Code: {1} , Payload: {2}".format(URL , str(Response.status_code) , Payload))
         else:
             Response = requests.get(URL , verify=False , timeout=5 , headers={"User-Agent":Payload} , allow_redirects=False)
-            print("Request Has Been Sent To: {0}, Status-Code: {1}".format(URL , str(Response.status_code)))
-    except Exception as e:
+            print("Request Has Been Sent To: {0}, Status-Code: {1} , Payload: {2}".format(URL , str(Response.status_code) , Payload))
+    except Exception:
         print("Can't Request This URL: {0}".format(URL))
 
 def CollectOptions():
@@ -75,6 +87,7 @@ def CollectOptions():
     Parser.add_option("-p" , "--payload" , dest="payload" , help="The Payload You Want To Use Instead Of The Default One")
     Parser.add_option("-b" , "--bin" , dest="bin" , help="Your External Bin You Want To Use To Detect If The Payload Is Fired")
     Parser.add_option("-r" , "--redirections" , dest="redirect" , help="Redirection Mode To Allow/Disallow Them")
+    Parser.add_option("-s" , "--strip" , dest="strip" , help="The Payload Seprator To Split Them.")
 
     Options , _ = Parser.parse_args()
     return Options
@@ -89,11 +102,25 @@ def Main(Options):
     else:
         Hunter = Config["bin"]
 
+    Payloads = PayloadsStripper(Config["payload"] , Options.strip)
+
+    if type(Payloads) == list:
+        # There's more than one
+        _mode = 0
+    else:
+        _mode = 1
+
     URLs = open(Config["file"] , 'r')
     for URL in URLs:
         URL = URL.rstrip("\n")
-        Sender(URL=URL , Redirect=Config["redirection"] , Payload=Config["payload"] , Hunter=Hunter)
 
+        if _mode == 1:
+            Sender(URL=URL , Redirect=Config["redirection"] , Payload=Config["payload"] , Hunter=Hunter)
+        elif _mode == 0:
+            for SinglePayload in Payloads:
+                Sender(URL=URL , Redirect=Config["redirection"] , Payload=SinglePayload , Hunter=Hunter)
+        else:
+            pass
 
 if __name__ == '__main__':
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
