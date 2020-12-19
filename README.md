@@ -48,5 +48,7 @@ python3 Blinder.py -f URLs.txt -u hacker -r allow -p '"><img src="XXX">'
 python3 Blinder.py -f URLs.txt -b https://www.example.com/ -r allow -p '"><img src="XXX">'
 ```
 
+- If You Didn't Add a Payload In Any Cases, Blinder Will Auto Set The Default XSSHunter XSS Payload To Use It.
+
 ### Something Isn't Working Or You Want To Improve Something?
 - Then Please Open an Issue With It Or You Can Fork The Project Then Create a Pull Request.
