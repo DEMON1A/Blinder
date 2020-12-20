@@ -5,7 +5,7 @@
 ```
 git clone https://www.github.com/DEMON1A/Blinder.git
 cd Blinder
-python3 Blinder.py username.xss.ht SubDomains.txt
+python3 Blinder.py [ARGS]
 ```
 
 ## Description
