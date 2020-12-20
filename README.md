@@ -1,5 +1,5 @@
 # Blinder
-- A Tool Written In Python3 For Sending Blind-XSS Payloads On The User-Agent 
+- A Tool Written In Python3 To Send Blind Payloads On The Request Headers Maybe Stored On The Logs
 
 ## Usage
 ```
