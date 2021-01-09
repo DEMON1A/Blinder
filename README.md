@@ -1,13 +1,6 @@
 # Blinder
 - A Tool Written In Python3 To Send Blind Payloads On The Request Headers Maybe Stored On The Logs
 
-## Usage
-```
-git clone https://www.github.com/DEMON1A/Blinder.git
-cd Blinder
-python3 Blinder.py [ARGS]
-```
-
 ## Description
 - That's a New Version Of Blinder You Can Use To Automate Sending Payloads Into URLs With a Fast Way. It Basicly Uses The Payload You Provide To Send It On The Value Of The *User-Agent* Header To Inject The Payload Into The Server Logs If The Admin Can View It. In This Case You Should Receive An Alert On Your XSSHunter/Bin. That's Just It.
 
