@@ -17,6 +17,8 @@ python3 Blinder.py [ARGS]
 - Using Your Own Payloads That Could Be Used To Inject Other Payloads For Other Issues
 - Been Able To Allow/Disallow Redirects With Requests
 - You Can Use Multi Payloads With The Requests And Select The Split Char
+- Been Able To Select Your Own Header On The Requests That Will Be Sent.
+- Selecting Your Own Replace String That Will Be Replaced To Your XSSHunter/Bin
 - Cleaner Code!
 
 ### How To Use:
