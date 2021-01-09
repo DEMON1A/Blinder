@@ -71,3 +71,4 @@ python3 Blinder.py -b https://site.com/ -f URLs
 
 ### Something Isn't Working Or You Want To Improve Something?
 - Then Please Open an Issue With It Or You Can Fork The Project Then Create a Pull Request.
+- You Can Also DM Me On Twitter: [@DemoniaSlash](https://twitter.com/DemoniaSlash) 
