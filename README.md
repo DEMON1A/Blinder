@@ -33,7 +33,7 @@ python3 Blinder.py -u hacker -f URLs
 
 - The Redirection Rules Are `allow` and `deny` In LowerCase. The Program Will Trigger An Error In Case You Used Something Else.
 ```
-python3 Blinder.py -u hacker -f URLs -file -r deny
+python3 Blinder.py -u hacker -f URLs -r deny
 ```
 #### Payloads And Multi Payloads.
 - In Blinder The Default Payload Is `"><script src=XSSHunter></script>`That's The Same as The Default One On XSShunter Website. In Case You Want To Use Another Payloads For XSS Or Something Else Like SSTI , CSTI You Can Add It Using `-p` Option That Can Be Used With Some Command Like The First Example
