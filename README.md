@@ -4,6 +4,8 @@
 ## Description
 - Blinder is an automation tools written in python3, used to spread sending blind payloads into HTTP servers using XSShunter or custom requests bin, with custom payloads so you can test for more issues like SSTI, CSTI and XSS
 
+![preview](https://i.imgur.com/RugY1vS.png)
+
 ### Installation
 ```
 git clone https://github.com/DEMON1A/Blinder
